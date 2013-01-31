@@ -37,7 +37,7 @@ fun get_substitutions(substitutions: string list list, s: string) =
 								then get_substitutions(tail, s)
 								else mylist @ get_substitutions(tail, s)
 	
-(* BUG:  This is returning too short of a list, fix it *)
+(* BUG:  This is returning too short of a list when there are more than one list that match, fix it *)
 fun get_substitutions2(substitutions: string list list, s: string) =
 	case substitutions of
 		[] => []
@@ -61,6 +61,7 @@ fun get_substitutions2(substitutions: string list list, s: string) =
 fun similar_names(substitutions: string list list, full_name: {first:string,middle:string,last:string}) =
 	let 
 		val {first=x,middle=y,last=z} = full_name
+		(* NOTE: The accumulator is reversing the order of the list, the homework didn't say whether that mattered *)
 		fun aux(xs, acc) =
 					case xs of
 						[] => acc

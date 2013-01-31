@@ -17,5 +17,11 @@ get_substitutions2([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred",
 get_substitutions2([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred","F"]], "Betty") = ["Elizabeth"];
 get_substitutions2([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred","F"]], "Bill") = [];
 
+similar_names([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred","F"]],{first="Betty", middle="W", last="Smith"}) = 
+[{first="Betty", last="Smith", middle="W"}, {first="Elizabeth", last="Smith", middle="W"}];
+
+similar_names([["Fred","Fredrick"],["Elizabeth","Betty","Beth"],["Freddie","Fred","F"]],{first="Betty", middle="W", last="Smith"}) = 
+[{first="Betty", last="Smith", middle="W"}, {first="Beth", last="Smith", middle="W"}, {first="Elizabeth", last="Smith", middle="W"}];
+
 similar_names([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred","F"]],{first="Fred", middle="W", last="Smith"}) = 
-[{first="Fred", last="Smith", middle="W"}, {first="Fredrick", last="Smith", middle="W"}, {first="Freddie", last="Smith", middle="W"}, {first="F", last="Smith", middle="W"}];
+[{first="Fred", last="Smith", middle="W"}, {first="F", last="Smith", middle="W"}, {first="Freddie", last="Smith", middle="W"}, {first="Fredrick", last="Smith", middle="W"}];
