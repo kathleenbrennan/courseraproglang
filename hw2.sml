@@ -37,6 +37,7 @@ fun get_substitutions(substitutions: string list list, s: string) =
 								then get_substitutions(tail, s)
 								else mylist @ get_substitutions(tail, s)
 	
+(* BUG:  This is returning too short of a list, fix it *)
 fun get_substitutions2(substitutions: string list list, s: string) =
 	case substitutions of
 		[] => []
@@ -44,7 +45,7 @@ fun get_substitutions2(substitutions: string list list, s: string) =
 			let fun aux(xs, acc) =
 				case xs of
 					[] => acc
-					| x::xs' => aux(xs, x::acc)				
+					| x::xs' => aux(xs', x::acc)				
 				in
 					case all_except_option(s, head) of
 							NONE => get_substitutions(tail, s)
@@ -55,29 +56,24 @@ fun get_substitutions2(substitutions: string list list, s: string) =
 								else
 									aux(mylist,[])
 				end
+				
 	
-(*
-Write a function similar_names, which takes a string list list of substitutions  and a full name of type {first:string,middle:string,last:string} and returns a list of full
-names (type {first:string,middle:string,last:string} list). The result is all the full names you
-can produce by substituting for the first name (and only the first name) using subtitutions and get_substitutions2
-*)
 fun similar_names(substitutions: string list list, full_name: {first:string,middle:string,last:string}) =
-	(*let val similar_first = get_substitutions(substitutions, first)*)
-	let val {first=x,middle=y,last=z} = full_name
+	let 
+		val {first=x,middle=y,last=z} = full_name
+		fun aux(xs, acc) =
+					case xs of
+						[] => acc
+						| x'::xs' => aux(xs', {first=x',middle=y,last=z}::acc)	
 	in
-		get_substitutions(substitutions, x)
-	end
-	
-fun record(substitutions: string list list, full_name: {first:string,middle:string,last:string}) =
-	(*let val similar_first = get_substitutions2(substitutions, first)*)
-	let val {first=x,middle=y,last=z} = full_name
-	in
-		(*get_substitutions2(substitutions, x)*)
-		x
+		let val similar_firsts = get_substitutions(substitutions, x) 
+		in 
+			case similar_firsts of
+				[] => []
+				| x'::xs => full_name::aux(similar_firsts,[])
+		end
 	end
 
-	
-	
 (* you may assume that Num is always used with values 2, 3, ..., 9
    though it will not really come up *)
 datatype suit = Clubs | Diamonds | Hearts | Spades
