@@ -86,4 +86,39 @@ datatype move = Discard of card | Draw
 
 exception IllegalMove
 
-(* put your solutions for problem 2 here *)
+(* put your solutions for problem 2 here 
+
+datatype mytype = TwoInts of int * int 
+                | Str of string 
+                | Pizza
+
+fun f x = 
+    case x of 
+	Pizza => 3 
+      | Str s => 8
+      | TwoInts(i1,i2) => i1 + i2
+	  
+fun zip3 list_triple =
+    case list_triple of 
+	([],[],[]) => []
+      | (hd1::tl1,hd2::tl2,hd3::tl3) => (hd1,hd2,hd3)::zip3(tl1,tl2,tl3)
+      | _ => raise ListLengthMismatch	  
+	  *)
+
+fun card_color(card) =
+	let val (mysuit, myrank) = card
+	in 
+		case mysuit of
+			Clubs => Black
+			| Spades => Black
+			| _ => Red
+	end
+	
+fun card_value(card) =
+	let val (mysuit, myrank) = card
+	in 
+		case myrank of
+			Ace => 11
+			| Num i => i
+			| _ => 10
+	end
