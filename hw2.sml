@@ -62,14 +62,13 @@ names (type {first:string,middle:string,last:string} list). The result is all th
 can produce by substituting for the first name (and only the first name) using subtitutions and get_substitutions2
 *)
 fun similar_names(substitutions: string list list, full_name: {first:string,middle:string,last:string}) =
-	(*let val similar_first = get_substitutions2(substitutions, first)*)
+	(*let val similar_first = get_substitutions(substitutions, first)*)
 	let val {first=x,middle=y,last=z} = full_name
 	in
-		(*get_substitutions2(substitutions, x)*)
-		full_name
+		get_substitutions(substitutions, x)
 	end
 	
-fun record(full_name: {first:string,middle:string,last:string}) =
+fun record(substitutions: string list list, full_name: {first:string,middle:string,last:string}) =
 	(*let val similar_first = get_substitutions2(substitutions, first)*)
 	let val {first=x,middle=y,last=z} = full_name
 	in
