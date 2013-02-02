@@ -25,3 +25,21 @@ similar_names([["Fred","Fredrick"],["Elizabeth","Betty","Beth"],["Freddie","Fred
 
 similar_names([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred","F"]],{first="Fred", middle="W", last="Smith"}) = 
 [{first="Fred", last="Smith", middle="W"}, {first="F", last="Smith", middle="W"}, {first="Freddie", last="Smith", middle="W"}, {first="Fredrick", last="Smith", middle="W"}];
+
+remove_card([(Hearts,Queen)],(Hearts,Queen),IllegalMove)=[];
+remove_card([(Hearts,Queen),(Hearts,Queen)],(Hearts,Queen),IllegalMove)=[(Hearts,Queen)];
+remove_card([(Hearts,Queen),(Spades,Jack)],(Spades,Jack),IllegalMove)=[(Hearts,Queen)];
+
+(*remove_card([(Hearts,Queen),(Spades,Jack)],(Spades,Queen),IllegalMove) handle IllegalMove => true;*)
+
+all_same_color([]) = true;
+all_same_color([(Hearts,Queen)]) = true;
+all_same_color([(Hearts,Queen),(Diamonds,Num(3))]) = true;
+all_same_color([(Hearts,Queen),(Spades,Num(3))]) = false;
+all_same_color([(Hearts,Queen),(Diamonds,Num(3)), (Hearts,Ace)]) = true;
+all_same_color([(Hearts,Queen), (Diamonds,King),(Spades,Num(3)), (Clubs,Ace)]) = false;
+
+sum_cards([]) = 0;
+sum_cards([(Hearts,Ace)]) = 11;
+sum_cards([(Hearts,Ace),(Spades,Num(2))]) = 13;
+sum_cards([(Hearts,Ace),(Spades,Num(2)),(Diamonds,Queen)]) = 23;

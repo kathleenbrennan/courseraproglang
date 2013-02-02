@@ -12,12 +12,12 @@ fun same_string(s1 : string, s2 : string) =
 
 (* put your solutions for problem 1 here *)
 
-fun all_except_option(x : string, xs: string list) =
+fun all_except_option(x, xs) =
 	let fun all_except_list (xs) = 
 		case xs of
 			[] => []
 			| x'::xs' => 
-				if x' = x
+				if same_string(x', x)
 					then xs'
 					else x'::all_except_list(xs')
 		in
@@ -26,7 +26,7 @@ fun all_except_option(x : string, xs: string list) =
 				| y::ys => SOME (all_except_list(xs))
 		end
 		
-fun get_substitutions(substitutions: string list list, s: string) =
+fun get_substitutions(substitutions, s) =
 	case substitutions of
 		[] => []
 		| head::tail =>
@@ -38,7 +38,7 @@ fun get_substitutions(substitutions: string list list, s: string) =
 								else mylist @ get_substitutions(tail, s)
 	
 (* BUG:  This is returning too short of a list when there are more than one list that match, fix it *)
-fun get_substitutions2(substitutions: string list list, s: string) =
+fun get_substitutions2(substitutions,s) =
 	case substitutions of
 		[] => []
 		| head::tail =>
@@ -58,7 +58,7 @@ fun get_substitutions2(substitutions: string list list, s: string) =
 				end
 				
 	
-fun similar_names(substitutions: string list list, full_name: {first:string,middle:string,last:string}) =
+fun similar_names(substitutions, full_name) =
 	let 
 		val {first=x,middle=y,last=z} = full_name
 		(* NOTE: The accumulator is reversing the order of the list, the homework didn't say whether that mattered *)
@@ -86,27 +86,10 @@ datatype move = Discard of card | Draw
 
 exception IllegalMove
 
-(* put your solutions for problem 2 here 
+(* put your solutions for problem 2 here *)
 
-datatype mytype = TwoInts of int * int 
-                | Str of string 
-                | Pizza
-
-fun f x = 
-    case x of 
-	Pizza => 3 
-      | Str s => 8
-      | TwoInts(i1,i2) => i1 + i2
-	  
-fun zip3 list_triple =
-    case list_triple of 
-	([],[],[]) => []
-      | (hd1::tl1,hd2::tl2,hd3::tl3) => (hd1,hd2,hd3)::zip3(tl1,tl2,tl3)
-      | _ => raise ListLengthMismatch	  
-	  *)
-
-fun card_color(card) =
-	let val (mysuit, myrank) = card
+fun card_color(c) =
+	let val (mysuit, myrank) = c
 	in 
 		case mysuit of
 			Clubs => Black
@@ -114,11 +97,70 @@ fun card_color(card) =
 			| _ => Red
 	end
 	
-fun card_value(card) =
-	let val (mysuit, myrank) = card
+fun card_value(c) =
+	let val (mysuit, myrank) = c
 	in 
 		case myrank of
 			Ace => 11
 			| Num i => i
 			| _ => 10
 	end
+
+fun remove_card(cs, c, e) =
+	(* todo: change to use accumulator *)
+	let fun all_except_list (xs) = 
+			case xs of
+				[] => []
+				| x'::xs' => 
+					if x' = c
+						then xs'
+						else x'::all_except_list(xs')
+	in
+		let val all_except = all_except_list(cs) 
+			in
+				if all_except = cs
+				then raise IllegalMove
+				else all_except
+			end
+	end
+	
+fun all_same_color(cs) =
+	case cs of
+	[] => true
+	| x::[] => true
+	| x::y::[] => card_color(x) = card_color(y)
+	| x::y::xs => card_color(x) = card_color(y) andalso all_same_color(y::xs) 
+	
+fun sum_cards(cs) = 
+	let fun sum_values (xs,acc) =
+		case xs of
+			[] => acc
+			| x::xs' => sum_values(xs', card_value(x)+acc)
+		in
+			sum_values(cs,0)
+		end
+
+(* Scoring works as follows: Let sum be the sum
+of the values of the held-cards. If sum is greater than goal, the preliminary score is three times sum - goal,
+else the preliminary score is goal - sum. The score is the preliminary score unless all the held-cards are the
+same color, in which case the score is the preliminary score divided by 2 (and rounded down as usual with
+integer division; use ML's div operator).*)
+fun score(cs, goal) =
+	let val sum = sum_cards(cs)
+	val prelim_score = if(sum > goal)
+						then 3 *(sum - goal)
+						else (goal - sum)	
+	in
+		if(all_same_color(cs))
+		then prelim_score div 2
+		else prelim_score
+	end
+
+	
+
+			
+	
+
+	
+	
+	
