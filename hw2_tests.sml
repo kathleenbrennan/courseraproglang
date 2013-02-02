@@ -43,3 +43,22 @@ sum_cards([]) = 0;
 sum_cards([(Hearts,Ace)]) = 11;
 sum_cards([(Hearts,Ace),(Spades,Num(2))]) = 13;
 sum_cards([(Hearts,Ace),(Spades,Num(2)),(Diamonds,Queen)]) = 23;
+
+(* Scoring works as follows: Let sum be the sum
+of the values of the held-cards. If sum is greater than goal, the preliminary score is three times sum - goal,
+else the preliminary score is goal - sum. The score is the preliminary score unless all the held-cards are the
+same color, in which case the score is the preliminary score divided by 2 (and rounded down as usual with
+integer division; use ML's div operator).*)
+score([],0)=0;
+score([],28)=14; 
+score([(Spades,Num(2))],28)=13; 
+score([(Spades,Num(2)),(Clubs,Num(2))],28)=12; 
+score([(Spades,Num(2)),(Hearts,Num(2))],28)=24; 
+score([(Spades,Queen),(Spades,Ace)],28)=3; 
+score([(Spades,Queen),(Hearts,Ace)],28)=7; 
+score([(Spades,Queen),(Hearts,Ace)],21)=0; 
+score([(Spades,Queen),(Hearts,Ace)],20)=3; 
+score([(Spades,Num(9)),(Clubs,Num(9)),(Clubs,Num(3))],20)=1; 
+score([(Spades,Num(9)),(Clubs,Num(9)),(Hearts,Num(3))],20)=3; 
+
+officiate([(Spades,Num(2))],[],28)=13; 

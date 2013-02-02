@@ -140,11 +140,6 @@ fun sum_cards(cs) =
 			sum_values(cs,0)
 		end
 
-(* Scoring works as follows: Let sum be the sum
-of the values of the held-cards. If sum is greater than goal, the preliminary score is three times sum - goal,
-else the preliminary score is goal - sum. The score is the preliminary score unless all the held-cards are the
-same color, in which case the score is the preliminary score divided by 2 (and rounded down as usual with
-integer division; use ML's div operator).*)
 fun score(cs, goal) =
 	let val sum = sum_cards(cs)
 	val prelim_score = if(sum > goal)
@@ -156,7 +151,48 @@ fun score(cs, goal) =
 		else prelim_score
 	end
 
+(*
+rite a function officiate, which \runs a game." It takes a card list (the card-list) a move list
+(what the player \does" at each point), and an int (the goal) and returns the score at the end of the
+game after processing (some or all of) the moves in the move list in order. Use a locally dened recursive
+helper function that takes several arguments that together represent the current state of the game. As
+described above:
+ The game starts with the held-cards being the empty list.
+ The game ends if there are no more moves. (The player chose to stop since the move list is empty.)
+ If the player discards some card c, play continues (i.e., make a recursive call) with the held-cards
+not having c and the card-list unchanged. If c is not in the held-cards, raise the IllegalMove
+exception.
+ If the player draws and the card-list is empty, the game is over. Else if drawing causes the sum of
+the held-cards to exceed the goal, the game is over. Else play continues with a larger held-cards
+and a smaller card-list.
+*)
+
+fun officiate(cards, moves, goal) =
+	let fun make_move(hcs, cs,mvs) =
+		case (hcs, cs, mvs) of
+			(* no moves left *)	
+			(_, _, []) => score(cs, goal) 
+			(* some moves left, card-list empty 
+			| (_, [], mv_hd::mv_tl) => 
+				case mv_hd of
+					Draw => score(cs, goal)
+					Discard i => 7777(*raise IllegalMove  can't discard when cards are empty *)*)
+			(* some moves left, card-list not empty *)
+			| (_, card_hd::card_tl, mv_hd::mv_tl) => 7777
+				(*case mv_hd of
+					Draw =>
+						if sum_cards(cs) > goal 
+						then score(cs, goal)
+						else make_move(card_tl, mv_tl)
+					| Discard i =>
+						remove_card(cs, card_hd, IllegalMove)
+						make_move(card_tl, mv_tl)
+						*)
 	
+	in
+		make_move([], cards, moves)
+	end
+
 
 			
 	
