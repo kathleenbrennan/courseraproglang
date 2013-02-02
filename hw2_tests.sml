@@ -3,7 +3,8 @@ all_except_option("Abbie", string_list) = SOME(["Betty", "Clarice"]);
 all_except_option("Betty", string_list) = SOME(["Abbie", "Clarice"]);
 all_except_option("Clarice", string_list) = SOME(["Abbie", "Betty"]);
 all_except_option("Clarice", ["Abbie", "Clarice"]) = SOME(["Abbie"]);
-all_except_option("Clarice", ["Clarice"]) = NONE;
+all_except_option("Clarice", ["Clarice"]) = SOME([]);
+all_except_option("Clarice", ["Barry"]) = NONE;
 
 get_substitutions([], "Bill") = [];
 get_substitutions([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred","F"]], "") = [];
@@ -25,6 +26,8 @@ similar_names([["Fred","Fredrick"],["Elizabeth","Betty","Beth"],["Freddie","Fred
 
 similar_names([["Fred","Fredrick"],["Elizabeth","Betty"],["Freddie","Fred","F"]],{first="Fred", middle="W", last="Smith"}) = 
 [{first="Fred", last="Smith", middle="W"}, {first="F", last="Smith", middle="W"}, {first="Freddie", last="Smith", middle="W"}, {first="Fredrick", last="Smith", middle="W"}];
+
+similar_names([],{first="Betty", middle="W", last="Smith"}) = [{first="Betty", middle="W", last="Smith"}];
 
 remove_card([(Hearts,Queen)],(Hearts,Queen),IllegalMove)=[];
 remove_card([(Hearts,Queen),(Hearts,Queen)],(Hearts,Queen),IllegalMove)=[(Hearts,Queen)];
@@ -61,4 +64,19 @@ score([(Spades,Queen),(Hearts,Ace)],20)=3;
 score([(Spades,Num(9)),(Clubs,Num(9)),(Clubs,Num(3))],20)=1; 
 score([(Spades,Num(9)),(Clubs,Num(9)),(Hearts,Num(3))],20)=3; 
 
+(*
+rite a function officiate, which \runs a game." It takes a card list (the card-list) a move list
+(what the player \does" at each point), and an int (the goal) and returns the score at the end of the
+game after processing (some or all of) the moves in the move list in order. Use a locally dened recursive
+helper function that takes several arguments that together represent the current state of the game. As
+described above:
+ The game starts with the held-cards being the empty list.
+ The game ends if there are no more moves. (The player chose to stop since the move list is empty.)
+ If the player discards some card c, play continues (i.e., make a recursive call) with the held-cards
+not having c and the card-list unchanged. If c is not in the held-cards, raise the IllegalMove
+exception.
+ If the player draws and the card-list is empty, the game is over. Else if drawing causes the sum of
+the held-cards to exceed the goal, the game is over. Else play continues with a larger held-cards
+and a smaller card-list.
+*)
 officiate([(Spades,Num(2))],[],28)=13; 

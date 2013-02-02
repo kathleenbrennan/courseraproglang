@@ -1,16 +1,10 @@
 (* Dan Grossman, Coursera PL, HW2 Provided Code *)
 
-(* 	do not use the # character
-	do not need to write down explicit types - use pattern matching
-*)
-
 (* if you use this function to compare two strings (returns true if the same
    string), then you avoid several of the functions in problem 1 having
    polymorphic types that may be confusing *)
 fun same_string(s1 : string, s2 : string) =
     s1 = s2
-
-(* put your solutions for problem 1 here *)
 
 fun all_except_option(x, xs) =
 	let fun all_except_list (xs) = 
@@ -37,7 +31,7 @@ fun get_substitutions(substitutions, s) =
 								then get_substitutions(tail, s)
 								else mylist @ get_substitutions(tail, s)
 	
-(* BUG:  This is returning too short of a list when there are more than one list that match, fix it *)
+(* BUG:  This is returning incorrect results when there are more than one list that match, fix it *)
 fun get_substitutions2(substitutions,s) =
 	case substitutions of
 		[] => []
@@ -70,7 +64,7 @@ fun similar_names(substitutions, full_name) =
 		let val similar_firsts = get_substitutions(substitutions, x) 
 		in 
 			case similar_firsts of
-				[] => []
+				[] => full_name::[]
 				| x'::xs => full_name::aux(similar_firsts,[])
 		end
 	end
@@ -151,51 +145,33 @@ fun score(cs, goal) =
 		else prelim_score
 	end
 
-(*
-rite a function officiate, which \runs a game." It takes a card list (the card-list) a move list
-(what the player \does" at each point), and an int (the goal) and returns the score at the end of the
-game after processing (some or all of) the moves in the move list in order. Use a locally dened recursive
-helper function that takes several arguments that together represent the current state of the game. As
-described above:
- The game starts with the held-cards being the empty list.
- The game ends if there are no more moves. (The player chose to stop since the move list is empty.)
- If the player discards some card c, play continues (i.e., make a recursive call) with the held-cards
-not having c and the card-list unchanged. If c is not in the held-cards, raise the IllegalMove
-exception.
- If the player draws and the card-list is empty, the game is over. Else if drawing causes the sum of
-the held-cards to exceed the goal, the game is over. Else play continues with a larger held-cards
-and a smaller card-list.
-*)
-
 fun officiate(cards, moves, goal) =
-	let fun make_move(hcs, cs,mvs) =
+	let fun make_move(hcs, cs, mvs) =
 		case (hcs, cs, mvs) of
 			(* no moves left *)	
-			(_, _, []) => score(cs, goal) 
-			(* some moves left, card-list empty 
-			| (_, [], mv_hd::mv_tl) => 
-				case mv_hd of
-					Draw => score(cs, goal)
-					Discard i => 7777(*raise IllegalMove  can't discard when cards are empty *)*)
-			(* some moves left, card-list not empty *)
-			| (_, card_hd::card_tl, mv_hd::mv_tl) => 7777
-				(*case mv_hd of
-					Draw =>
-						if sum_cards(cs) > goal 
-						then score(cs, goal)
-						else make_move(card_tl, mv_tl)
-					| Discard i =>
-						remove_card(cs, card_hd, IllegalMove)
-						make_move(card_tl, mv_tl)
-						*)
-	
+			(_, _, []) => score(cs, goal)  
+			
+			(* card list empty *)
+			| (_, [], Draw::mv_tl) => score(cs, goal)
+			
+			(* card list empty after drawing *)
+			| (_, cs_hd::[], Draw::mv_tl) => score(cs, goal)
+			
+			(* card list not empty *)
+			| (_, cs_hd::cs_tl, Draw::mv_tl) => 
+				let val new_hcs = cs_hd::hcs (* append head of card list as drawn card to held cards *)
+				in
+					if sum_cards(new_hcs) > goal
+						then score(new_hcs, goal)
+						else make_move(new_hcs, cs_tl, mv_tl) (* recurse to next move with larger held-cards and smaller card-list *)
+				end
+			(* on discarding, remove discarded from held cards and recurse, card list unchanged *)
+			| (_, _, Discard i::mv_tl) => 
+				make_move(remove_card(cs, i, IllegalMove), cs, mv_tl)
 	in
 		make_move([], cards, moves)
 	end
 
-
-			
-	
 
 	
 	
